@@ -27,6 +27,7 @@ class Register(View):
         except:
             return HttpResponse(status=409)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class Login(View):
     def post(self, request):
         logout(request)
@@ -39,6 +40,7 @@ class Login(View):
             login(request, user)
             return HttpResponse(status=200)
 
+@method_decorator(csrf_exempt, name='dispatch')
 class Logout(View):
     def get(self, request):
         logout(request)

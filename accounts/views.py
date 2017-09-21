@@ -29,6 +29,9 @@ class Register(View):
 
 @method_decorator(csrf_exempt, name='dispatch')
 class Login(View):
+    def get(self, request):
+        return render(request, 'accounts/login.html')
+
     def post(self, request):
         logout(request)
         username = request.POST.get('username')

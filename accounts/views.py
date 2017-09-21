@@ -17,6 +17,9 @@ from accounts.models import User
 
 @method_decorator(csrf_exempt, name='dispatch')
 class Register(View):
+    def get(self, request):
+        return render(request, 'accounts/register.html')
+
     def post(self, request):
         logout(request)
         username = request.POST.get('username')

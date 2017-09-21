@@ -15,7 +15,7 @@ from question.models import Question
 
 class Index(View):
     def get(self, request):
-        return HttpResponse(status=200)
+        return render(request, 'question/index.html')
 
 @method_decorator(csrf_exempt, name='dispatch')
 class QuestionAndAnswer(View):
@@ -30,6 +30,7 @@ class QuestionAndAnswer(View):
         question = request.POST.get('question')
         answer = request.POST.get('answer')
         questionPK = request.POST.get('questionPK')
+
         if question is not None:
             q = Question.objects.create(question=question)
             q.save()

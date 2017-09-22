@@ -20,7 +20,14 @@ class Index(View):
 @method_decorator(csrf_exempt, name='dispatch')
 class QuestionAndAnswer(View):
     def get(self, request, username):
-        return HttpResponse(status=200)
+        context = {}
+        try:
+            user = User.objects.get(username=username)
+        except:
+            return HttpResponse(status=404)
+        context['username'] = user.username
+        context['questions'] = user.questions.all()
+        return render(request, 'question/mypage.html', context)
 
     def post(self, request, username):
         try:

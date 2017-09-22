@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Anonymous Question</title>​
+        <script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+
+        <style media="screen">
+            html, body {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                font-size: 10px;
+                background-color: rgb(33, 150, 243);
+            }
+            .header {
+                width: 100%;
+                height: 5rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .header .name {
+                margin: 0;
+                color: white;
+                font-size: 4rem;
+            }
+            .header .logout {
+                text-decoration: none;
+            }
+            .container {
+                width: 100%;
+                height: calc(100% - 5rem);
+            }
+            .container .question-input-field {
+                width: 100%;
+                height: 12rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .container .question-list-field {
+                width: 100%;
+                height: 50rem;
+                overflow-y: scroll;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-start;
+            }
+
+            .container .question-list-field .question-item {
+                width: calc(100% - 2rem);
+                height: auto;
+                margin-left: 2rem;
+                margin-top: 4rem
+            }
+
+            .container .question-list-field .question-item span {
+                color: white;
+                font-size: 3rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1 class="name">{{ username }}</h1>
+            <button class="logout"type="button"><a href="/accounts/logout/">Logout</a></button>
+        </div>
+        <div class="container">
+            <div class="question-input-field">
+                <textarea id="question" rows="2" cols="80"></textarea>
+                <button id="question-submit" type="button">질문하기</button>
+            </div>
+            <div class="question-list-field">
+
+                {% for question in questions %}
+                    <div class="question-item">
+                    <div class="question">
+                        <span><strong>질문: {{ question.question }}</strong></span>
+                    </div>
+                    <div class="answer">
+                        {% if question.isAnswered == 1 %}
+                            <span><strong>답변: {{ question.answer }}</strong></span>
+                        {% endif %}
+                        {% if question.isAnswered == 0 %}
+                            <textarea class="{{ question.pk }}" rows="2" cols="80"></textarea>
+                            <button class="answer-submit" id="{{ question.pk }}" type="submit" name="button">답변하기</button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            $('#question-submit').on('click', () => {
+                var form = new FormData();
+                form.append("question", $('#question').val());
+
+                var settings = {
+                  "async": true,
+                  "crossDomain": true,
+                  "url": "/{{ username }}/",
+                  "method": "POST",
+                  "processData": false,
+                  "contentType": false,
+                  "mimeType": "multipart/form-data",
+                  "data": form
+                }
+
+                $.ajax(settings).done(function (response) {
+                  console.log(response);
+                  location.reload();
+                });
+            });
+            $('.answer-submit').on('click', (e) => {
+                var form = new FormData();
+                var pk = e.target.id;
+                console.log(pk);
+                console.log($(`.${pk}`).val());
+                form.append("answer", $(`.${pk}`).val());
+                form.append("questionPK", `${pk}`);
+
+                var settings = {
+                  "async": true,
+                  "crossDomain": true,
+                  "url": "/{{ username }}/",
+                  "method": "POST",
+                  "processData": false,
+                  "contentType": false,
+                  "mimeType": "multipart/form-data",
+                  "data": form
+                }
+
+                $.ajax(settings).done(function (response) {
+                  console.log(response);
+                  location.reload();
+                });
+            })
+        </script>
+    </body>
+</html>
